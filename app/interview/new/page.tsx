@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 import InterviewSetupForm from '@/components/interview/InterviewSetupForm'
 
 export default function NewInterviewPage() {
@@ -13,9 +14,9 @@ export default function NewInterviewPage() {
               Claude will generate 6–8 tailored questions based on the role and your background.
             </p>
           </div>
-          <Button asChild variant="ghost">
-            <Link href="/dashboard">← Back</Link>
-          </Button>
+          <Link href="/dashboard" className={cn(buttonVariants({ variant: 'ghost' }))}>
+            ← Back
+          </Link>
         </div>
         <InterviewSetupForm />
       </div>

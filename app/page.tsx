@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 export default function LandingPage() {
   return (
@@ -13,12 +14,15 @@ export default function LandingPage() {
           practice your answers, and receive instant AI-powered feedback.
         </p>
         <div className="flex gap-4 justify-center">
-          <Button asChild size="lg">
-            <Link href="/auth">Get Started Free</Link>
-          </Button>
-          <Button asChild variant="outline" size="lg" className="text-white border-white hover:bg-white/10">
-            <Link href="/auth?tab=login">Sign In</Link>
-          </Button>
+          <Link href="/auth" className={cn(buttonVariants({ size: 'lg' }))}>
+            Get Started Free
+          </Link>
+          <Link
+            href="/auth?tab=login"
+            className={cn(buttonVariants({ variant: 'outline', size: 'lg' }), 'text-white border-white hover:bg-white/10')}
+          >
+            Sign In
+          </Link>
         </div>
       </div>
     </div>
