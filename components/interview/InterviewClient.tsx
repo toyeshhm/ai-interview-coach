@@ -16,7 +16,9 @@ export default function InterviewClient({ session }: { session: Session }) {
   const questions: Question[] = (session.questions ?? []).sort(
     (a, b) => a.order_index - b.order_index
   )
-  const [currentIndex, setCurrentIndex] = useState(0)
+  const firstUnanswered = questions.findIndex(q => !q.answers || q.answers.length === 0)
+  const initialIndex = firstUnanswered === -1 ? 0 : firstUnanswered
+  const [currentIndex, setCurrentIndex] = useState(initialIndex)
   const [answerText, setAnswerText] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [lastResult, setLastResult] = useState<AnswerResult | null>(null)
