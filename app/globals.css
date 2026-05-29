@@ -2,14 +2,39 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+/* ── Brand tokens ── */
+:root {
+  --charcoal: #1c1917;
+  --charcoal-mid: #252119;
+  --coral: #c96442;
+  --coral-hover: #b8563a;
+  --cream: #faf8f5;
+  --cream-warm: #f5f1eb;
+  --border-light: #e8e0d5;
+  --border-dark: rgba(255, 255, 255, 0.07);
+  --stone: #a8a29e;
+  --warm-mid: #78716c;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-sans:  var(--font-dm-sans);
+  --font-mono:  var(--font-dm-mono);
+  --font-serif: var(--font-playfair);
+  --font-heading: var(--font-dm-sans);
+
+  /* Brand colors */
+  --color-charcoal:     var(--charcoal);
+  --color-charcoal-mid: var(--charcoal-mid);
+  --color-coral:        var(--coral);
+  --color-coral-hover:  var(--coral-hover);
+  --color-cream:        var(--cream);
+  --color-cream-warm:   var(--cream-warm);
+  --color-stone:        var(--stone);
+  --color-warm-mid:     var(--warm-mid);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -127,4 +152,56 @@
   html {
     @apply font-sans;
   }
+}
+
+/* ── Keyframes ── */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes doc-rise {
+  from { opacity: 0; transform: rotate(1.2deg) translateY(28px) scale(0.97); }
+  to   { opacity: 1; transform: rotate(1.2deg) translateY(0) scale(1); }
+}
+@keyframes bar-grow {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+@keyframes glow-drift {
+  0%, 100% { transform: translate(0, 0); }
+  50%       { transform: translate(-30px, -20px); }
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ── Scroll reveal ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── Graph-paper grid (used on dark hero/footer sections) ── */
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* ── Grain overlay ── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.4;
 }
