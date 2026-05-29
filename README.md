@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Interview Coach
 
-## Getting Started
+An AI-powered interview coaching application built with Next.js 15, Anthropic Claude, and Supabase.
 
-First, run the development server:
+## Overview
+
+AI Interview Coach helps candidates prepare for job interviews through AI-driven mock interviews, real-time feedback, and personalized coaching — powered by Claude.
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Framework | Next.js 15 (App Router) |
+| Language | TypeScript |
+| UI | React 19, shadcn/ui, Tailwind CSS v4 |
+| AI | Anthropic Claude API (`@anthropic-ai/sdk`) |
+| Backend | Supabase (Auth + PostgreSQL) |
+| Testing | Vitest + Testing Library |
+| Deployment | Vercel |
+
+## Prerequisites
+
+- Node.js 20+
+- A [Supabase](https://supabase.com) project
+- An [Anthropic](https://console.anthropic.com) API key
+
+## Setup
+
+**1. Clone and install dependencies**
+
+```bash
+git clone https://github.com/toyeshhm/ai-interview-coach.git
+cd ai-interview-coach
+npm install
+```
+
+**2. Configure environment variables**
+
+Copy `.env.local` and fill in your credentials:
+
+```bash
+cp .env.local .env.local
+```
+
+| Variable | Description |
+|----------|-------------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Your Supabase anonymous/public key |
+| `ANTHROPIC_API_KEY` | Your Anthropic API key (server-side only) |
+
+**3. Run the development server**
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to see the app.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+app/              # Next.js App Router pages and layouts
+components/
+  ui/             # shadcn/ui primitives (Button, Card, Input, etc.)
+lib/
+  utils.ts        # Shared utility functions
+tests/            # Vitest test files
+```
 
-## Learn More
+## Scripts
 
-To learn more about Next.js, take a look at the following resources:
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Build for production |
+| `npm run start` | Start production server |
+| `npm run test` | Run tests in watch mode |
+| `npm run test:run` | Run tests once (CI) |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deployment
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Deploy to Vercel with one click:
 
-## Deploy on Vercel
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/toyeshhm/ai-interview-coach)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Set the three environment variables (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `ANTHROPIC_API_KEY`) in your Vercel project settings before deploying.
