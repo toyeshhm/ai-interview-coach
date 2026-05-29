@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import SessionCard from '@/components/dashboard/SessionCard'
+import SignOutButton from '@/components/dashboard/SignOutButton'
 import type { Session } from '@/types'
 
 export default async function DashboardPage() {
@@ -30,6 +31,7 @@ export default async function DashboardPage() {
         </div>
         <div className="flex items-center gap-6">
           <span className="font-mono text-[11px]" style={{ color: '#4a4540' }}>{user.email}</span>
+          <SignOutButton />
           <Link
             href="/interview/new"
             className="font-sans font-bold text-[13px] text-white px-4 py-2 rounded-[5px] transition-colors"

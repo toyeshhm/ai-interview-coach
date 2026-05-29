@@ -17,6 +17,7 @@ function AuthForm() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [confirmationSent, setConfirmationSent] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -24,8 +25,9 @@ function AuthForm() {
     setError('')
 
     if (tab === 'signup') {
-      const { error } = await supabase.auth.signUp({ email, password })
+      const { data, error } = await supabase.auth.signUp({ email, password })
       if (error) { setError(error.message); setLoading(false); return }
+      if (!data.session) { setConfirmationSent(true); setLoading(false); return }
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email, password })
       if (error) { setError(error.message); setLoading(false); return }
@@ -87,6 +89,30 @@ function AuthForm() {
       {/* Right — form */}
       <div className="flex items-center justify-center p-14" style={{ backgroundColor: 'var(--cream)' }}>
         <div className="w-full max-w-[380px]">
+          {confirmationSent ? (
+            <div>
+              <div
+                className="w-10 h-10 rounded-full flex items-center justify-center mb-6"
+                style={{ background: 'rgba(201,100,66,0.1)', border: '1px solid rgba(201,100,66,0.2)' }}
+              >
+                <span style={{ color: 'var(--coral)', fontSize: 18 }}>✉</span>
+              </div>
+              <h2 className="font-serif italic font-bold mb-3 tracking-[-0.01em]" style={{ fontSize: 28, color: 'var(--charcoal)' }}>
+                Check your email.
+              </h2>
+              <p className="font-sans text-[14px] leading-[1.7] mb-6" style={{ color: 'var(--warm-mid)' }}>
+                We sent a confirmation link to <strong style={{ color: 'var(--charcoal)' }}>{email}</strong>. Click it to activate your account, then sign in.
+              </p>
+              <button
+                onClick={() => { setConfirmationSent(false); setTab('login'); setPassword('') }}
+                className="font-sans font-semibold text-[13px] transition-colors"
+                style={{ color: 'var(--coral)' }}
+              >
+                Back to sign in →
+              </button>
+            </div>
+          ) : (
+          <>
           {/* Tab switcher */}
           <div className="flex mb-10 border-b" style={{ borderColor: 'var(--border-light)' }}>
             {(['signup', 'login'] as const).map(t => (
@@ -164,6 +190,8 @@ function AuthForm() {
               {tab === 'login' ? 'Sign up' : 'Sign in'}
             </button>
           </p>
+          </>
+          )}
         </div>
       </div>
     </div>

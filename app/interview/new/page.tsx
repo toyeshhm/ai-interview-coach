@@ -34,7 +34,7 @@ export default async function NewInterviewPage() {
             Set up your interview.
           </h1>
           <p className="font-sans text-[14px] leading-[1.7]" style={{ color: 'var(--stone)' }}>
-            Paste the job description and your resume below. The AI will generate five tailored questions for the role.
+            Paste the job description and your resume below. The AI will generate tailored questions for the role.
           </p>
         </div>
         <InterviewSetupForm />
