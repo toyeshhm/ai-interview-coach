@@ -18,6 +18,17 @@ function AuthForm() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [confirmationSent, setConfirmationSent] = useState(false)
+  const [forgotMode, setForgotMode] = useState(false)
+  const [resetSent, setResetSent] = useState(false)
+
+  async function handleForgotPassword() {
+    if (!email) { setError('Enter your email first.'); return }
+    setLoading(true)
+    setError('')
+    await supabase.auth.resetPasswordForEmail(email)
+    setResetSent(true)
+    setLoading(false)
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -180,10 +191,54 @@ function AuthForm() {
             </button>
           </form>
 
+          {tab === 'login' && (
+            <div className="mt-4 text-center">
+              {resetSent ? (
+                <p className="font-sans text-[13px]" style={{ color: 'var(--warm-mid)' }}>
+                  Reset link sent — check your email.
+                </p>
+              ) : forgotMode ? (
+                <div className="space-y-3">
+                  <p className="font-sans text-[13px]" style={{ color: 'var(--warm-mid)' }}>
+                    Enter your email above, then:
+                  </p>
+                  <div className="flex gap-3 justify-center">
+                    <button
+                      onClick={handleForgotPassword}
+                      disabled={loading}
+                      className="font-sans font-semibold text-[13px] disabled:opacity-50"
+                      style={{ color: 'var(--coral)' }}
+                    >
+                      {loading ? 'Sending…' : 'Send reset link'}
+                    </button>
+                    <button
+                      onClick={() => { setForgotMode(false); setError('') }}
+                      className="font-sans text-[13px]"
+                      style={{ color: 'var(--warm-mid)' }}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                  {error && <p className="font-sans text-[12px]" style={{ color: '#c0392b' }}>{error}</p>}
+                </div>
+              ) : (
+                <button
+                  onClick={() => { setForgotMode(true); setError('') }}
+                  className="font-sans text-[13px] transition-colors"
+                  style={{ color: 'var(--warm-mid)' }}
+                  onMouseEnter={e => ((e.currentTarget as HTMLElement).style.color = 'var(--charcoal)')}
+                  onMouseLeave={e => ((e.currentTarget as HTMLElement).style.color = 'var(--warm-mid)')}
+                >
+                  Forgot password?
+                </button>
+              )}
+            </div>
+          )}
+
           <p className="font-sans text-[13px] text-center mt-6" style={{ color: 'var(--warm-mid)' }}>
             {tab === 'login' ? "Don't have an account? " : 'Already have an account? '}
             <button
-              onClick={() => setTab(tab === 'login' ? 'signup' : 'login')}
+              onClick={() => { setTab(tab === 'login' ? 'signup' : 'login'); setForgotMode(false); setResetSent(false); setError('') }}
               className="font-semibold transition-colors"
               style={{ color: 'var(--coral)' }}
             >

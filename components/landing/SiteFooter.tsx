@@ -14,10 +14,14 @@ export default function SiteFooter() {
       </div>
 
       <div className="flex gap-6">
-        {['Privacy', 'Terms', 'Contact'].map(label => (
+        {[
+          { label: 'Privacy', href: '/privacy' },
+          { label: 'Terms', href: '/terms' },
+          { label: 'Contact', href: 'mailto:toyeshhm@gmail.com' },
+        ].map(({ label, href }) => (
           <a
             key={label}
-            href="#"
+            href={href}
             className="font-sans text-[12px] transition-colors"
             style={{ color: 'var(--warm-mid)' }}
             onMouseEnter={e => ((e.currentTarget as HTMLElement).style.color = 'var(--stone)')}

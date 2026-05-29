@@ -37,8 +37,10 @@ export default function Nav() {
       <div className="flex items-center gap-2">
         <Link
           href="/auth?tab=login"
-          className="text-[13px] font-medium px-4 py-2 rounded"
+          className="text-[13px] font-medium px-4 py-2 rounded transition-colors"
           style={{ color: 'var(--stone)' }}
+          onMouseEnter={e => ((e.currentTarget as HTMLElement).style.color = 'var(--cream)')}
+          onMouseLeave={e => ((e.currentTarget as HTMLElement).style.color = 'var(--stone)')}
         >
           Sign in
         </Link>
