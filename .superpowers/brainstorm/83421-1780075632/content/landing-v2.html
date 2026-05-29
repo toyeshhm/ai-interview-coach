@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Landing Page — Redesigned</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --charcoal: #1c1917;
+  --charcoal-soft: #28231f;
+  --coral: #c96442;
+  --coral-hover: #b8563a;
+  --cream: #faf8f5;
+  --cream-warm: #f5f1eb;
+  --border: #e8e0d5;
+  --muted: #a8a29e;
+  --warm-mid: #78716c;
+  --serif: 'Playfair Display', Georgia, serif;
+  --sans: 'DM Sans', system-ui, sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--sans);
+  background: var(--cream);
+  color: var(--charcoal);
+  overflow-x: hidden;
+}
+
+/* grain overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.35;
+}
+
+/* ─── NAV ─── */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(250,248,245,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 56px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.logo {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--charcoal);
+}
+.logo-dot { color: var(--coral); }
+.nav-center {
+  display: flex;
+  gap: 36px;
+  list-style: none;
+}
+.nav-center a {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--warm-mid);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.nav-center a:hover { color: var(--charcoal); }
+.nav-right { display: flex; gap: 8px; align-items: center; }
+.btn-ghost {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--charcoal);
+  background: none;
+  border: 1.5px solid var(--border);
+  padding: 8px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.btn-ghost:hover { border-color: var(--charcoal); }
+.btn-primary {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 700;
+  color: white;
+  background: var(--coral);
+  border: none;
+  padding: 9px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-primary:hover { background: var(--coral-hover); }
+
+/* ─── HERO ─── */
+.hero {
+  background: var(--charcoal);
+  min-height: 92vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle animated gradient orb */
+.hero-orb {
+  position: absolute;
+  width: 600px; height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201,100,66,0.12) 0%, transparent 65%);
+  top: -100px; right: -100px;
+  animation: pulse-orb 8s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes pulse-orb {
+  0%, 100% { transform: scale(1) translate(0,0); opacity: 0.6; }
+  50% { transform: scale(1.15) translate(-20px, 20px); opacity: 1; }
+}
+
+.hero-left {
+  padding: 96px 64px 96px 56px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 32px;
+  opacity: 0;
+  animation: fade-up 0.7s 0.1s ease forwards;
+}
+.kicker-line {
+  width: 28px;
+  height: 1px;
+  background: var(--coral);
+}
+.kicker-text {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+h1.hero-headline {
+  font-family: var(--serif);
+  font-size: clamp(52px, 5.5vw, 74px);
+  font-weight: 900;
+  font-style: italic;
+  color: var(--cream);
+  line-height: 1.0;
+  letter-spacing: -0.025em;
+  margin-bottom: 28px;
+  opacity: 0;
+  animation: fade-up 0.8s 0.2s ease forwards;
+}
+h1.hero-headline .accent { color: var(--coral); font-style: normal; }
+
+.hero-sub {
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--muted);
+  max-width: 400px;
+  margin-bottom: 44px;
+  font-weight: 400;
+  opacity: 0;
+  animation: fade-up 0.8s 0.35s ease forwards;
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  opacity: 0;
+  animation: fade-up 0.8s 0.45s ease forwards;
+}
+.btn-hero {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+  background: var(--coral);
+  border: none;
+  padding: 15px 32px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s;
+  letter-spacing: 0.01em;
+}
+.btn-hero:hover { background: var(--coral-hover); transform: translateY(-1px); }
+.hero-link {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--warm-mid);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.15s;
+}
+.hero-link:hover { color: var(--cream); }
+.hero-link-arrow { transition: transform 0.15s; }
+.hero-link:hover .hero-link-arrow { transform: translateX(3px); }
+
+/* Hero right — editorial stacked question cards */
+.hero-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 56px 80px 0;
+  position: relative;
+  z-index: 1;
+}
+
+.card-stack {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+}
+
+.q-card {
+  background: #242018;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 12px;
+  padding: 24px 26px;
+  opacity: 0;
+}
+.q-card:nth-child(1) { animation: fade-up 0.7s 0.5s ease forwards; margin-bottom: 12px; }
+.q-card:nth-child(2) { animation: fade-up 0.7s 0.65s ease forwards; margin-bottom: 12px; }
+.q-card:nth-child(3) { animation: fade-up 0.7s 0.8s ease forwards; }
+
+.q-card-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--coral);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.q-card-label-score {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--cream);
+  letter-spacing: 0;
+  text-transform: none;
+}
+.q-card-text {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--cream);
+  line-height: 1.55;
+  margin-bottom: 14px;
+}
+.q-card-answer {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.q-card-feedback {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #7ec8a0;
+  background: rgba(126,200,160,0.1);
+  border: 1px solid rgba(126,200,160,0.2);
+  padding: 3px 10px;
+  border-radius: 50px;
+}
+
+/* small score bar */
+.score-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+.score-bar-track {
+  flex: 1;
+  height: 3px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.score-bar-fill {
+  height: 100%;
+  background: var(--coral);
+  border-radius: 2px;
+}
+.score-bar-num {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--coral);
+  white-space: nowrap;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── TICKER ─── */
+.ticker {
+  background: var(--coral);
+  padding: 13px 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.ticker-inner {
+  display: inline-flex;
+  animation: marquee 24s linear infinite;
+}
+.ticker-item {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.9);
+  padding: 0 48px;
+}
+.ticker-sep { color: rgba(255,255,255,0.4); padding-right: 48px; }
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ─── HOW IT WORKS — editorial rows ─── */
+.process {
+  background: var(--cream);
+  padding: 120px 56px;
+}
+.process-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 80px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 32px;
+}
+.process-header h2 {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--charcoal);
+  line-height: 1.05;
+}
+.process-header p {
+  font-size: 14px;
+  color: var(--warm-mid);
+  max-width: 260px;
+  line-height: 1.7;
+  text-align: right;
+}
+
+.process-row {
+  display: grid;
+  grid-template-columns: 96px 1fr 1fr;
+  gap: 0 48px;
+  padding: 48px 0;
+  border-bottom: 1px solid var(--border);
+  align-items: start;
+  transition: background 0.2s;
+  margin: 0 -56px;
+  padding-left: 56px;
+  padding-right: 56px;
+}
+.process-row:first-of-type { border-top: none; }
+.process-row:hover { background: var(--cream-warm); }
+
+.process-num {
+  font-family: var(--serif);
+  font-size: 72px;
+  font-weight: 900;
+  color: var(--border);
+  line-height: 1;
+  user-select: none;
+  transition: color 0.25s;
+}
+.process-row:hover .process-num { color: rgba(201,100,66,0.2); }
+
+.process-content h3 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--charcoal);
+  margin-bottom: 12px;
+  letter-spacing: -0.01em;
+}
+.process-content p {
+  font-size: 14px;
+  color: var(--warm-mid);
+  line-height: 1.8;
+  max-width: 340px;
+}
+
+.process-aside {
+  border-left: 1px solid var(--border);
+  padding-left: 48px;
+}
+.process-aside-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.process-aside-detail {
+  font-size: 13px;
+  color: var(--warm-mid);
+  line-height: 1.7;
+}
+.process-aside-detail strong {
+  color: var(--charcoal);
+  font-weight: 600;
+}
+
+/* ─── FEATURES — manifesto style ─── */
+.manifesto {
+  background: var(--charcoal);
+  padding: 120px 56px;
+}
+.manifesto-header {
+  display: flex;
+  gap: 48px;
+  margin-bottom: 80px;
+  align-items: flex-end;
+}
+.manifesto-eyebrow {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--coral);
+  flex-shrink: 0;
+}
+.manifesto-header h2 {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 52px;
+  font-weight: 700;
+  color: var(--cream);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+.manifesto-header h2 em {
+  font-style: normal;
+  color: var(--coral);
+}
+
+.manifesto-list {
+  list-style: none;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.manifesto-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 32px;
+  align-items: center;
+  padding: 36px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  cursor: default;
+  transition: border-color 0.2s;
+  position: relative;
+}
+.manifesto-item::before {
+  content: '';
+  position: absolute;
+  left: -56px;
+  right: -56px;
+  top: 0;
+  bottom: 0;
+  background: rgba(201,100,66,0.04);
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.manifesto-item:hover::before { opacity: 1; }
+
+.manifesto-item-left {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 48px;
+  align-items: baseline;
+}
+.manifesto-item-title {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--cream);
+  line-height: 1.2;
+  transition: color 0.2s;
+}
+.manifesto-item:hover .manifesto-item-title { color: white; }
+.manifesto-item-desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.75;
+  max-width: 420px;
+}
+.manifesto-item-arrow {
+  font-size: 22px;
+  color: rgba(255,255,255,0.1);
+  transition: color 0.2s, transform 0.2s;
+  flex-shrink: 0;
+}
+.manifesto-item:hover .manifesto-item-arrow {
+  color: var(--coral);
+  transform: translateX(4px);
+}
+
+/* ─── TESTIMONIAL ─── */
+.testimonial {
+  background: var(--cream-warm);
+  padding: 120px 56px;
+  position: relative;
+  overflow: hidden;
+}
+.testimonial::before {
+  content: '\201C';
+  position: absolute;
+  font-family: var(--serif);
+  font-size: 280px;
+  color: var(--border);
+  top: -20px;
+  left: 32px;
+  line-height: 1;
+  user-select: none;
+  pointer-events: none;
+}
+.testimonial-inner {
+  max-width: 760px;
+  position: relative;
+  z-index: 1;
+}
+.testimonial-quote {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 34px;
+  font-weight: 700;
+  color: var(--charcoal);
+  line-height: 1.4;
+  margin-bottom: 40px;
+  letter-spacing: -0.01em;
+}
+.testimonial-attribution {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.testimonial-avatar {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: var(--coral);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+}
+.testimonial-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--charcoal);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.testimonial-role {
+  font-size: 12px;
+  color: var(--warm-mid);
+}
+
+/* ─── FOOTER CTA ─── */
+.footer-cta {
+  background: var(--charcoal);
+  padding: 120px 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 48px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.footer-cta h2 {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 56px;
+  font-weight: 900;
+  color: var(--cream);
+  line-height: 1.0;
+  letter-spacing: -0.025em;
+  max-width: 560px;
+}
+.footer-cta h2 .accent { color: var(--coral); font-style: normal; }
+.footer-cta-right {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+}
+.btn-cta {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+  background: var(--coral);
+  border: none;
+  padding: 16px 36px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s;
+  white-space: nowrap;
+}
+.btn-cta:hover { background: var(--coral-hover); transform: translateY(-1px); }
+.footer-cta-note {
+  font-size: 12px;
+  color: #4a4540;
+  padding-left: 2px;
+}
+
+/* ─── FOOTER ─── */
+footer {
+  background: var(--charcoal);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 28px 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.footer-logo {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #4a4540;
+}
+.footer-logo-dot { color: var(--coral); }
+.footer-links {
+  display: flex;
+  gap: 24px;
+}
+.footer-links a {
+  font-size: 12px;
+  color: #4a4540;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.footer-links a:hover { color: var(--muted); }
+.footer-copy {
+  font-size: 12px;
+  color: #3a3530;
+}
+
+/* ─── SCROLL REVEAL ─── */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Prep<span class="logo-dot">.</span>AI</div>
+  <ul class="nav-center">
+    <li><a href="#">How it works</a></li>
+    <li><a href="#">Features</a></li>
+    <li><a href="#">Pricing</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="btn-ghost">Sign In</button>
+    <button class="btn-primary">Get started free</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-orb"></div>
+
+  <div class="hero-left">
+    <div class="hero-kicker">
+      <div class="kicker-line"></div>
+      <span class="kicker-text">AI Interview Coaching</span>
+    </div>
+    <h1 class="hero-headline">
+      Land the job<br>you <span class="accent">deserve.</span>
+    </h1>
+    <p class="hero-sub">
+      Paste your resume and the job description. Get five tailored interview questions, practice your answers, and receive instant AI-powered feedback — scored and explained.
+    </p>
+    <div class="hero-actions">
+      <button class="btn-hero">Start practicing free</button>
+      <a href="#how" class="hero-link">How it works <span class="hero-link-arrow">→</span></a>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="card-stack">
+
+      <div class="q-card">
+        <div class="q-card-label">
+          Behavioral · Question 1
+          <span class="q-card-label-score">8.4 / 10</span>
+        </div>
+        <div class="q-card-text">"Walk me through a time you disagreed with your manager's technical decision."</div>
+        <div class="q-card-answer">
+          At Stripe, I pushed back on our team's plan to migrate to a new queue system mid-quarter...
+          <div class="score-bar-row">
+            <div class="score-bar-track"><div class="score-bar-fill" style="width:84%"></div></div>
+            <div class="score-bar-num">8.4</div>
+          </div>
+          <div class="q-card-feedback">Strong STAR structure</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-card-label">
+          Technical · Question 2
+          <span class="q-card-label-score">7.1 / 10</span>
+        </div>
+        <div class="q-card-text">"How would you design a rate limiter for a high-traffic API?"</div>
+        <div class="q-card-answer">
+          I'd use a sliding window counter stored in Redis with a TTL...
+          <div class="score-bar-row">
+            <div class="score-bar-track"><div class="score-bar-fill" style="width:71%"></div></div>
+            <div class="score-bar-num">7.1</div>
+          </div>
+          <div class="q-card-feedback" style="color:#f5c842;background:rgba(245,200,66,0.1);border-color:rgba(245,200,66,0.2);">Add more trade-off analysis</div>
+        </div>
+      </div>
+
+      <div class="q-card" style="opacity:0.55;transform:scale(0.98);">
+        <div class="q-card-label">System Design · Question 3</div>
+        <div class="q-card-text" style="color:var(--muted)">"Design the notification system for a social platform at 10M daily users."</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-inner">
+    <span class="ticker-item">Tailored questions</span><span class="ticker-sep">·</span>
+    <span class="ticker-item">Behavioral coaching</span><span class="ticker-sep">·</span>
+    <span class="ticker-item">System design prep</span><span class="ticker-sep">·</span>
+    <span class="ticker-item">Instant scoring</span><span class="ticker-sep">·</span>
+    <span class="ticker-item">Improvement tips</span><span class="ticker-sep">·</span>
+    <span class="ticker-item">Session history</span><span class="ticker-sep">·</span>
+    <span class="ticker-item">Role-matched questions</span><span class="ticker-sep">·</span>
+    <span class="ticker-item">STAR framework</span><span class="ticker-sep">·</span>
+    <!-- duplicate for seamless loop -->
+    <span class="ticker-item">Tailored questions</span><span class="ticker-sep">·</span>
+    <span class="ticker-item">Behavioral coaching</span><span class="ticker-sep">·</span>
+    <span class="ticker-item">System design prep</span><span class="ticker-sep">·</span>
+    <span class="ticker-item">Instant scoring</span><span class="ticker-sep">·</span>
+    <span class="ticker-item">Improvement tips</span><span class="ticker-sep">·</span>
+    <span class="ticker-item">Session history</span><span class="ticker-sep">·</span>
+    <span class="ticker-item">Role-matched questions</span><span class="ticker-sep">·</span>
+    <span class="ticker-item">STAR framework</span><span class="ticker-sep">·</span>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="process" id="how">
+  <div class="process-header reveal">
+    <h2>Three steps to<br>your next offer.</h2>
+    <p>No courses. No flashcards. Just deliberate practice matched to the actual job.</p>
+  </div>
+
+  <div class="process-row reveal">
+    <div class="process-num">01</div>
+    <div class="process-content">
+      <h3>Paste your resume<br>& job description</h3>
+      <p>Drop in what you have. The AI reads both and extracts exactly what a real interviewer at that company would care about — your experience mapped to their requirements.</p>
+    </div>
+    <div class="process-aside">
+      <div class="process-aside-label">What you bring</div>
+      <div class="process-aside-detail">
+        Your <strong>resume</strong> in any format. The <strong>job description</strong> from the company's posting. That's it. No setup, no templates.
+      </div>
+    </div>
+  </div>
+
+  <div class="process-row reveal">
+    <div class="process-num">02</div>
+    <div class="process-content">
+      <h3>Answer five<br>tailored questions</h3>
+      <p>You get five questions generated specifically for you — behavioral, technical, and situational, calibrated to the seniority and domain of the role you're targeting.</p>
+    </div>
+    <div class="process-aside">
+      <div class="process-aside-label">Question types</div>
+      <div class="process-aside-detail">
+        <strong>Behavioral</strong> questions tied to your specific past experience. <strong>Technical</strong> or <strong>system design</strong> questions relevant to the role's stack and scope.
+      </div>
+    </div>
+  </div>
+
+  <div class="process-row reveal">
+    <div class="process-num">03</div>
+    <div class="process-content">
+      <h3>Get scored,<br>get better</h3>
+      <p>Every answer is scored 1–10 with written feedback. After the session, you receive specific, actionable improvement tips per answer. No fluff, no generics.</p>
+    </div>
+    <div class="process-aside">
+      <div class="process-aside-label">What you get</div>
+      <div class="process-aside-detail">
+        A <strong>score</strong> for each answer. <strong>Written feedback</strong> on what you said well and what to strengthen. <strong>Overall session score</strong> saved to your history.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES — manifesto -->
+<section class="manifesto" id="features">
+  <div class="manifesto-header reveal">
+    <div class="manifesto-eyebrow">Features</div>
+    <h2>Built for people who<br>take this <em>seriously.</em></h2>
+  </div>
+
+  <ul class="manifesto-list">
+    <li class="manifesto-item reveal">
+      <div class="manifesto-item-left">
+        <div class="manifesto-item-title">Tailored<br>questions</div>
+        <div class="manifesto-item-desc">Every question is generated from your actual resume and the specific job description — not pulled from a generic list. If you've never done distributed systems, you won't be asked about them unless the role requires it.</div>
+      </div>
+      <div class="manifesto-item-arrow">→</div>
+    </li>
+    <li class="manifesto-item reveal">
+      <div class="manifesto-item-left">
+        <div class="manifesto-item-title">Instant<br>scoring</div>
+        <div class="manifesto-item-desc">Submit your answer and get feedback in seconds. Every response is scored on a 1–10 scale with specific commentary on clarity, relevance, and structure. No waiting, no ambiguity.</div>
+      </div>
+      <div class="manifesto-item-arrow">→</div>
+    </li>
+    <li class="manifesto-item reveal">
+      <div class="manifesto-item-left">
+        <div class="manifesto-item-title">Session<br>history</div>
+        <div class="manifesto-item-desc">Every session you complete is saved with your scores and improvement tips. Practice for the same role across multiple sessions and watch your performance arc upward over time.</div>
+      </div>
+      <div class="manifesto-item-arrow">→</div>
+    </li>
+    <li class="manifesto-item reveal">
+      <div class="manifesto-item-left">
+        <div class="manifesto-item-title">Honest<br>tips</div>
+        <div class="manifesto-item-desc">After each session, the AI gives you one sharp, specific improvement tip per question. Not "be more confident." Real, actionable guidance on exactly what to change.</div>
+      </div>
+      <div class="manifesto-item-arrow">→</div>
+    </li>
+  </ul>
+</section>
+
+<!-- TESTIMONIAL -->
+<section class="testimonial">
+  <div class="testimonial-inner reveal">
+    <div class="testimonial-quote">
+      "I did three sessions the night before my Google interview. The questions were scarily accurate — one came up almost word for word. The feedback helped me fix answers I didn't know were weak."
+    </div>
+    <div class="testimonial-attribution">
+      <div class="testimonial-avatar">S</div>
+      <div>
+        <div class="testimonial-name">Sarah K.</div>
+        <div class="testimonial-role">Software Engineer — now at Google</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER CTA -->
+<section class="footer-cta">
+  <h2 class="reveal">Your next offer<br>starts <span class="accent">here.</span></h2>
+  <div class="footer-cta-right reveal">
+    <button class="btn-cta">Start practicing free →</button>
+    <div class="footer-cta-note">No credit card · 2 minutes to set up</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Prep<span class="footer-logo-dot">.</span>AI</div>
+  <div class="footer-links">
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="#">Contact</a>
+  </div>
+  <div class="footer-copy">© 2026 Prep.AI</div>
+</footer>
+
+<script>
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(el => {
+    if (el.isIntersecting) {
+      el.target.classList.add('visible');
+      observer.unobserve(el.target);
+    }
+  });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
