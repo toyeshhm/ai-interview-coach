@@ -12,7 +12,7 @@ export async function generateTips(
     .join('\n\n')
 
   const model = genAI.getGenerativeModel({
-    model: 'gemini-2.5-pro',
+    model: 'gemini-2.5-flash',
     systemInstruction: `You are an expert career coach reviewing a mock interview. Identify the top 3 most impactful areas for improvement. Return a JSON array of exactly 3 strings: ["tip1", "tip2", "tip3"]. Each tip must be specific and actionable (1-2 sentences).`,
   })
 

@@ -36,13 +36,15 @@ export async function POST(request: NextRequest) {
     .single()
 
   if (sessionError || !session) {
+    console.error('[create] session insert failed:', sessionError)
     return NextResponse.json({ error: 'Failed to create session' }, { status: 500 })
   }
 
   let questions
   try {
     questions = await generateQuestions(jobDescription, resumeText)
-  } catch {
+  } catch (err) {
+    console.error('[create] generateQuestions failed:', err)
     await supabase.from('sessions').delete().eq('id', session.id)
     return NextResponse.json({ error: 'Failed to generate questions' }, { status: 500 })
   }

@@ -8,7 +8,7 @@ export async function generateQuestions(
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
 
   const model = genAI.getGenerativeModel({
-    model: 'gemini-2.5-pro',
+    model: 'gemini-2.5-flash',
     systemInstruction: `You are an expert technical interviewer. Generate 6-8 tailored interview questions based on the job description and candidate resume. Return a JSON array where each element has: "question_text" (string) and "order_index" (integer starting at 1). Mix behavioral, technical, and situational questions relevant to the role.`,
   })
 
