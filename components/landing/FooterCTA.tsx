@@ -7,7 +7,7 @@ export default function FooterCTA() {
     <section
       className="grid-bg relative py-30 px-13 flex items-center justify-between gap-12"
       style={{
-        background: 'var(--charcoal)',
+        backgroundColor: 'var(--charcoal)',
         borderTop: '1px solid var(--border-dark)',
       }}
     >
@@ -30,7 +30,7 @@ export default function FooterCTA() {
         >
           Start practicing free →
         </Link>
-        <div className="font-sans text-[12px] text-center" style={{ color: '#3a3530' }}>
+        <div className="font-sans text-[12px] text-center" style={{ color: 'var(--stone)' }}>
           No credit card · Takes 2 minutes
         </div>
       </div>

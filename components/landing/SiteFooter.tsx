@@ -19,16 +19,16 @@ export default function SiteFooter() {
             key={label}
             href="#"
             className="font-sans text-[12px] transition-colors"
-            style={{ color: '#3a3530' }}
-            onMouseEnter={e => ((e.target as HTMLElement).style.color = 'var(--stone)')}
-            onMouseLeave={e => ((e.target as HTMLElement).style.color = '#3a3530')}
+            style={{ color: 'var(--warm-mid)' }}
+            onMouseEnter={e => ((e.currentTarget as HTMLElement).style.color = 'var(--stone)')}
+            onMouseLeave={e => ((e.currentTarget as HTMLElement).style.color = 'var(--warm-mid)')}
           >
             {label}
           </a>
         ))}
       </div>
 
-      <div className="font-sans text-[12px]" style={{ color: '#2e2a27' }}>
+      <div className="font-sans text-[12px]" style={{ color: '#4a4540' }}>
         © 2026 Prep.AI
       </div>
     </footer>

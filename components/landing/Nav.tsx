@@ -19,14 +19,14 @@ export default function Nav() {
       </div>
 
       <ul className="hidden md:flex gap-8 list-none">
-        {['How it works', 'Features', 'Pricing'].map(label => (
+        {['How it works', 'Features'].map(label => (
           <li key={label}>
             <a
               href={`#${label.toLowerCase().replace(/\s+/g, '-')}`}
               className="text-[13px] font-medium transition-colors"
               style={{ color: 'var(--warm-mid)' }}
-              onMouseEnter={e => ((e.target as HTMLElement).style.color = 'var(--stone)')}
-              onMouseLeave={e => ((e.target as HTMLElement).style.color = 'var(--warm-mid)')}
+              onMouseEnter={e => ((e.currentTarget as HTMLElement).style.color = 'var(--stone)')}
+              onMouseLeave={e => ((e.currentTarget as HTMLElement).style.color = 'var(--warm-mid)')}
             >
               {label}
             </a>

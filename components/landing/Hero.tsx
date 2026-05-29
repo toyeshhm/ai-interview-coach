@@ -1,11 +1,13 @@
 'use client'
 
+import Link from 'next/link'
+
 export default function Hero() {
   return (
     <section
       className="relative flex overflow-hidden grid-bg"
       style={{
-        background: 'var(--charcoal)',
+        backgroundColor: 'var(--charcoal)',
         minHeight: 'calc(100vh - 64px)',
       }}
     >
@@ -79,7 +81,7 @@ export default function Hero() {
             className="flex items-center gap-6"
             style={{ opacity: 0, animation: 'rise 0.7s 0.44s ease forwards' }}
           >
-            <a
+            <Link
               href="/auth"
               className="font-sans font-bold text-[14px] text-white px-8 py-4 rounded-[5px] transition-colors"
               style={{ background: 'var(--coral)' }}
@@ -87,7 +89,7 @@ export default function Hero() {
               onMouseLeave={e => ((e.currentTarget as HTMLElement).style.background = 'var(--coral)')}
             >
               Start practicing free
-            </a>
+            </Link>
             <span className="font-sans text-[12px]" style={{ color: '#4a4540' }}>
               No card · 2 min setup
             </span>
