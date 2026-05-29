@@ -1,11 +1,17 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
-const mockCreate = vi.fn()
+const { mockGenerateContent } = vi.hoisted(() => ({
+  mockGenerateContent: vi.fn(),
+}))
 
-vi.mock('@anthropic-ai/sdk', () => ({
-  default: vi.fn().mockImplementation(() => ({
-    messages: { create: mockCreate },
-  })),
+vi.mock('@google/generative-ai', () => ({
+  GoogleGenerativeAI: vi.fn(function () {
+    return {
+      getGenerativeModel: vi.fn().mockReturnValue({
+        generateContent: mockGenerateContent,
+      }),
+    }
+  }),
 }))
 
 import { generateTips } from '@/lib/claude/generateTips'
@@ -17,13 +23,13 @@ const sampleQAPairs = [
 
 describe('generateTips', () => {
   beforeEach(() => {
-    mockCreate.mockReset()
+    mockGenerateContent.mockReset()
   })
 
-  it('returns array of 3 tip strings', async () => {
+  it('returns array of tip strings', async () => {
     const mockTips = ['Practice STAR method.', 'Be more specific.', 'Show enthusiasm.']
-    mockCreate.mockResolvedValueOnce({
-      content: [{ type: 'text', text: JSON.stringify(mockTips) }],
+    mockGenerateContent.mockResolvedValueOnce({
+      response: { text: () => JSON.stringify(mockTips) },
     })
 
     const result = await generateTips('SWE role', sampleQAPairs)
@@ -33,24 +39,23 @@ describe('generateTips', () => {
   })
 
   it('includes Q&A pairs in the prompt', async () => {
-    mockCreate.mockResolvedValueOnce({
-      content: [{ type: 'text', text: '["tip"]' }],
+    mockGenerateContent.mockResolvedValueOnce({
+      response: { text: () => '["tip"]' },
     })
 
     await generateTips('Engineer role', sampleQAPairs)
 
-    const callArgs = mockCreate.mock.calls[0][0]
-    expect(callArgs.messages[0].content).toContain('Tell me about yourself.')
-    expect(callArgs.messages[0].content).toContain('I am a developer.')
+    const callArgs = mockGenerateContent.mock.calls[0][0]
+    const textContent = callArgs.contents[0].parts[0].text
+    expect(textContent).toContain('Tell me about yourself.')
+    expect(textContent).toContain('I am a developer.')
   })
 
-  it('throws when Claude returns non-text content', async () => {
-    mockCreate.mockResolvedValueOnce({
-      content: [{ type: 'image', source: {} }],
+  it('throws when response is invalid JSON', async () => {
+    mockGenerateContent.mockResolvedValueOnce({
+      response: { text: () => 'not valid json' },
     })
 
-    await expect(generateTips('job', sampleQAPairs)).rejects.toThrow(
-      'Unexpected response type from Claude'
-    )
+    await expect(generateTips('job', sampleQAPairs)).rejects.toThrow()
   })
 })

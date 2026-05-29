@@ -1,4 +1,4 @@
-import Anthropic from '@anthropic-ai/sdk'
+import { GoogleGenerativeAI } from '@google/generative-ai'
 import type { AnswerEvaluation } from '@/types'
 
 export async function evaluateAnswer(
@@ -6,30 +6,17 @@ export async function evaluateAnswer(
   question: string,
   answer: string
 ): Promise<AnswerEvaluation> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let client: any
-  try {
-    client = new Anthropic()
-  } catch {
-    client = (Anthropic as unknown as (...args: unknown[]) => unknown)()
-  }
+  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
 
-  const message = await client.messages.create({
-    model: 'claude-opus-4-8',
-    max_tokens: 512,
-    system: `You are an expert interviewer evaluating candidate responses. Score the answer 1–10 (1=very poor, 5=average, 10=excellent) and give 2–3 sentences of constructive feedback. Return ONLY valid JSON — no markdown: { "score": number, "feedback": string }`,
-    messages: [
-      {
-        role: 'user',
-        content: `Job Description:\n${jobDescription}\n\nInterview Question:\n${question}\n\nCandidate Answer:\n${answer}\n\nEvaluate this answer.`,
-      },
-    ],
+  const model = genAI.getGenerativeModel({
+    model: 'gemini-2.5-pro',
+    systemInstruction: `You are an expert interviewer evaluating candidate responses. Score the answer 1-10 (1=very poor, 5=average, 10=excellent) and provide 2-3 sentences of constructive feedback. Return JSON: { "score": number, "feedback": string }`,
   })
 
-  const content = message.content[0]
-  if (content.type !== 'text') {
-    throw new Error('Unexpected response type from Claude')
-  }
+  const result = await model.generateContent({
+    contents: [{ role: 'user', parts: [{ text: `Job Description:\n${jobDescription}\n\nInterview Question:\n${question}\n\nCandidate Answer:\n${answer}` }] }],
+    generationConfig: { responseMimeType: 'application/json' },
+  })
 
-  return JSON.parse(content.text) as AnswerEvaluation
+  return JSON.parse(result.response.text()) as AnswerEvaluation
 }

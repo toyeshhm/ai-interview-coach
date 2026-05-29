@@ -1,25 +1,31 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { AnswerEvaluation } from '@/types'
 
-const mockCreate = vi.fn()
+const { mockGenerateContent } = vi.hoisted(() => ({
+  mockGenerateContent: vi.fn(),
+}))
 
-vi.mock('@anthropic-ai/sdk', () => ({
-  default: vi.fn().mockImplementation(() => ({
-    messages: { create: mockCreate },
-  })),
+vi.mock('@google/generative-ai', () => ({
+  GoogleGenerativeAI: vi.fn(function () {
+    return {
+      getGenerativeModel: vi.fn().mockReturnValue({
+        generateContent: mockGenerateContent,
+      }),
+    }
+  }),
 }))
 
 import { evaluateAnswer } from '@/lib/claude/evaluateAnswer'
 
 describe('evaluateAnswer', () => {
   beforeEach(() => {
-    mockCreate.mockReset()
+    mockGenerateContent.mockReset()
   })
 
-  it('returns score and feedback from Claude response', async () => {
+  it('returns score and feedback from Gemini response', async () => {
     const mockEval: AnswerEvaluation = { score: 8, feedback: 'Strong answer with good examples.' }
-    mockCreate.mockResolvedValueOnce({
-      content: [{ type: 'text', text: JSON.stringify(mockEval) }],
+    mockGenerateContent.mockResolvedValueOnce({
+      response: { text: () => JSON.stringify(mockEval) },
     })
 
     const result = await evaluateAnswer('SWE role', 'Tell me about yourself.', 'I have 5 years of experience...')
@@ -28,26 +34,25 @@ describe('evaluateAnswer', () => {
     expect(result.feedback).toBe('Strong answer with good examples.')
   })
 
-  it('passes all context to Claude', async () => {
-    mockCreate.mockResolvedValueOnce({
-      content: [{ type: 'text', text: JSON.stringify({ score: 7, feedback: 'ok' }) }],
+  it('passes all context to Gemini', async () => {
+    mockGenerateContent.mockResolvedValueOnce({
+      response: { text: () => JSON.stringify({ score: 7, feedback: 'ok' }) },
     })
 
     await evaluateAnswer('React Engineer', 'Explain hooks.', 'Hooks are functions...')
 
-    const callArgs = mockCreate.mock.calls[0][0]
-    expect(callArgs.messages[0].content).toContain('React Engineer')
-    expect(callArgs.messages[0].content).toContain('Explain hooks.')
-    expect(callArgs.messages[0].content).toContain('Hooks are functions...')
+    const callArgs = mockGenerateContent.mock.calls[0][0]
+    const textContent = callArgs.contents[0].parts[0].text
+    expect(textContent).toContain('React Engineer')
+    expect(textContent).toContain('Explain hooks.')
+    expect(textContent).toContain('Hooks are functions...')
   })
 
-  it('throws when Claude returns non-text content', async () => {
-    mockCreate.mockResolvedValueOnce({
-      content: [{ type: 'image', source: {} }],
+  it('throws when response is invalid JSON', async () => {
+    mockGenerateContent.mockResolvedValueOnce({
+      response: { text: () => 'not valid json' },
     })
 
-    await expect(evaluateAnswer('job', 'question', 'answer')).rejects.toThrow(
-      'Unexpected response type from Claude'
-    )
+    await expect(evaluateAnswer('job', 'question', 'answer')).rejects.toThrow()
   })
 })
