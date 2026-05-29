@@ -47,6 +47,17 @@ export async function POST(
     return NextResponse.json({ error: 'Failed to evaluate answer' }, { status: 500 })
   }
 
+  // Check for existing answer
+  const { data: existing } = await supabase
+    .from('answers')
+    .select('id')
+    .eq('question_id', questionId)
+    .maybeSingle()
+
+  if (existing) {
+    return NextResponse.json({ error: 'Answer already submitted for this question' }, { status: 409 })
+  }
+
   const { data: answer, error } = await supabase
     .from('answers')
     .insert({

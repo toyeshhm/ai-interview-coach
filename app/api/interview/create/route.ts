@@ -54,6 +54,7 @@ export async function POST(request: NextRequest) {
     )
 
   if (questionsError) {
+    await supabase.from('sessions').delete().eq('id', session.id)
     return NextResponse.json({ error: 'Failed to save questions' }, { status: 500 })
   }
 
