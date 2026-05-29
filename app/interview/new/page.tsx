@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import InterviewSetupForm from '@/components/interview/InterviewSetupForm'
@@ -16,9 +17,9 @@ export default async function NewInterviewPage() {
         <div className="font-sans font-bold text-[13px] tracking-[0.07em] uppercase" style={{ color: 'var(--cream)' }}>
           Prep<span style={{ color: 'var(--coral)' }}>.</span>AI
         </div>
-        <a href="/dashboard" className="font-sans text-[13px]" style={{ color: 'var(--stone)' }}>
+        <Link href="/dashboard" className="font-sans text-[13px]" style={{ color: 'var(--stone)' }}>
           ← Dashboard
-        </a>
+        </Link>
       </header>
 
       <main className="max-w-[680px] mx-auto px-8 py-16">

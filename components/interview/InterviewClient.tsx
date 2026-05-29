@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Textarea } from '@/components/ui/textarea'
 import type { Session, Question } from '@/types'
@@ -54,9 +55,12 @@ export default function InterviewClient({ session }: { session: Session }) {
     setError('')
   }
 
-  const scoreColor =
-    lastResult && lastResult.score >= 7 ? '#7ec8a0'
-    : lastResult && lastResult.score >= 5 ? '#f5c842'
+  const scoreColor = !lastResult
+    ? '#7ec8a0'
+    : lastResult.score >= 7
+    ? '#7ec8a0'
+    : lastResult.score >= 5
+    ? '#f5c842'
     : '#e07070'
 
   return (
@@ -80,9 +84,9 @@ export default function InterviewClient({ session }: { session: Session }) {
             />
           </div>
         </div>
-        <a href="/dashboard" className="font-sans text-[12px]" style={{ color: '#4a4540' }}>
+        <Link href="/dashboard" className="font-sans text-[12px]" style={{ color: '#4a4540' }}>
           Exit
-        </a>
+        </Link>
       </header>
 
       {/* Main */}

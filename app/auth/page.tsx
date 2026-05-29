@@ -36,10 +36,10 @@ function AuthForm() {
   }
 
   return (
-    <div className="min-h-screen grid" style={{ gridTemplateColumns: '1fr 1fr' }}>
+    <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
       {/* Left — brand panel */}
       <div
-        className="grid-bg relative flex flex-col justify-between p-14 overflow-hidden"
+        className="grid-bg relative hidden md:flex flex-col justify-between p-14 overflow-hidden"
         style={{ backgroundColor: 'var(--charcoal)' }}
       >
         {/* Glow */}
@@ -85,14 +85,14 @@ function AuthForm() {
       </div>
 
       {/* Right — form */}
-      <div className="flex items-center justify-center p-14" style={{ background: 'var(--cream)' }}>
+      <div className="flex items-center justify-center p-14" style={{ backgroundColor: 'var(--cream)' }}>
         <div className="w-full max-w-[380px]">
           {/* Tab switcher */}
           <div className="flex mb-10 border-b" style={{ borderColor: 'var(--border-light)' }}>
             {(['signup', 'login'] as const).map(t => (
               <button
                 key={t}
-                onClick={() => setTab(t)}
+                onClick={() => { setTab(t); setError('') }}
                 className="font-sans font-semibold text-[13px] pb-3 mr-6 border-b-2 transition-colors"
                 style={{
                   color: tab === t ? 'var(--charcoal)' : 'var(--warm-mid)',
