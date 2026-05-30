@@ -15,7 +15,7 @@ const NAV = [
   {
     heading: 'Company',
     links: [
-      { label: 'About', href: '/#about' },
+      { label: 'About', href: '/#features' },
       { label: 'Blog', href: '#', soon: true },
       { label: 'Careers', href: '#', soon: true },
       { label: 'Contact', href: '/contact' },

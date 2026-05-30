@@ -33,6 +33,10 @@ export default function PrivacyPage() {
             <h2 className="font-sans font-bold text-[16px] mb-3" style={{ color: 'var(--cream)' }}>Your rights</h2>
             <p>You can delete your account and all associated data at any time by contacting us at <a href="mailto:toyeshhm@gmail.com" style={{ color: 'var(--coral)' }}>toyeshhm@gmail.com</a>.</p>
           </section>
+          <section id="cookies">
+            <h2 className="font-sans font-bold text-[16px] mb-3" style={{ color: 'var(--cream)' }}>Cookies</h2>
+            <p>We use essential cookies only — a single session cookie issued by Supabase Auth to keep you signed in. We do not use tracking, advertising, or analytics cookies.</p>
+          </section>
           <section>
             <h2 className="font-sans font-bold text-[16px] mb-3" style={{ color: 'var(--cream)' }}>Contact</h2>
             <p>Questions? Reach us at <a href="mailto:toyeshhm@gmail.com" style={{ color: 'var(--coral)' }}>toyeshhm@gmail.com</a>.</p>
