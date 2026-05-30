@@ -160,16 +160,28 @@ git commit -m "feat: add Profile type and profiles migration"
 ```ts
 import Stripe from 'stripe'
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-04-30.basil',
-})
+// apiVersion is intentionally omitted — the SDK pins its own tested version
+export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 ```
 
-- [ ] **Step 2: Commit**
+- [ ] **Step 2: Create `lib/supabase/admin.ts`**
+
+The webhook runs without a user session, so RLS would block all queries. This client uses the service role key and bypasses RLS. **Only import this in server-side webhook code — never in client components or routes that handle user data directly.**
+
+```ts
+import { createClient } from '@supabase/supabase-js'
+
+export const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
+```
+
+- [ ] **Step 3: Commit**
 
 ```bash
-git add lib/stripe.ts
-git commit -m "feat: add Stripe server singleton"
+git add lib/stripe.ts lib/supabase/admin.ts
+git commit -m "feat: add Stripe singleton and Supabase admin client"
 ```
 
 ---
@@ -573,7 +585,6 @@ Create `tests/api/stripe-webhook.test.ts`:
 import { NextRequest } from 'next/server'
 import { vi, beforeEach, describe, it, expect } from 'vitest'
 
-vi.mock('@/lib/supabase/server')
 vi.mock('@/lib/stripe', () => ({
   stripe: {
     webhooks: {
@@ -582,7 +593,17 @@ vi.mock('@/lib/stripe', () => ({
   },
 }))
 
-import { createClient } from '@/lib/supabase/server'
+const mockFrom = vi.fn(() => ({
+  select: vi.fn().mockReturnThis(),
+  eq: vi.fn().mockReturnThis(),
+  single: vi.fn().mockResolvedValue({ data: { id: 'user-1' }, error: null }),
+  update: vi.fn().mockReturnThis(),
+}))
+
+vi.mock('@/lib/supabase/admin', () => ({
+  supabaseAdmin: { from: mockFrom },
+}))
+
 import { stripe } from '@/lib/stripe'
 import { POST } from '@/app/api/stripe/webhook/route'
 
@@ -597,17 +618,6 @@ function makeWebhookRequest(payload: object) {
   })
 }
 
-function makeSupabaseMock(userId = 'user-1') {
-  return {
-    from: vi.fn(() => ({
-      select: vi.fn().mockReturnThis(),
-      eq: vi.fn().mockReturnThis(),
-      single: vi.fn().mockResolvedValue({ data: { id: userId }, error: null }),
-      update: vi.fn().mockReturnThis(),
-    })),
-  }
-}
-
 describe('POST /api/stripe/webhook', () => {
   beforeEach(() => vi.clearAllMocks())
 
@@ -615,37 +625,25 @@ describe('POST /api/stripe/webhook', () => {
     const event = {
       type: 'customer.subscription.updated',
       data: {
-        object: {
-          id: 'sub_123',
-          customer: 'cus_123',
-          status: 'active',
-        },
+        object: { id: 'sub_123', customer: 'cus_123', status: 'active' },
       },
     }
     vi.mocked(stripe.webhooks.constructEvent).mockReturnValue(event as any)
-    const mockSupabase = makeSupabaseMock()
-    vi.mocked(createClient).mockResolvedValue(mockSupabase as any)
 
     const res = await POST(makeWebhookRequest(event))
 
     expect(res.status).toBe(200)
-    expect(mockSupabase.from).toHaveBeenCalledWith('profiles')
+    expect(mockFrom).toHaveBeenCalledWith('profiles')
   })
 
   it('sets plan to free on subscription.deleted', async () => {
     const event = {
       type: 'customer.subscription.deleted',
       data: {
-        object: {
-          id: 'sub_123',
-          customer: 'cus_123',
-          status: 'canceled',
-        },
+        object: { id: 'sub_123', customer: 'cus_123', status: 'canceled' },
       },
     }
     vi.mocked(stripe.webhooks.constructEvent).mockReturnValue(event as any)
-    const mockSupabase = makeSupabaseMock()
-    vi.mocked(createClient).mockResolvedValue(mockSupabase as any)
 
     const res = await POST(makeWebhookRequest(event))
 
@@ -674,7 +672,7 @@ npm run test:run -- tests/api/stripe-webhook.test.ts
 
 ```ts
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { supabaseAdmin } from '@/lib/supabase/admin'
 import { stripe } from '@/lib/stripe'
 import type Stripe from 'stripe'
 
@@ -689,7 +687,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
   }
 
-  const supabase = await createClient()
+  const supabase = supabaseAdmin
 
   if (
     event.type === 'customer.subscription.updated' ||
@@ -1394,13 +1392,14 @@ git commit -m "feat: add UsageBanner and upgrade success banner to dashboard"
 
 ## Task 12: Add env vars to Vercel and deploy
 
-- [ ] **Step 1: Add the four new env vars to Vercel**
+- [ ] **Step 1: Add the five new env vars to Vercel**
 
 ```bash
 echo "sk_live_..." | vercel env add STRIPE_SECRET_KEY production
 echo "whsec_..." | vercel env add STRIPE_WEBHOOK_SECRET production
 echo "price_..." | vercel env add STRIPE_PRICE_ID production
 echo "pk_live_..." | vercel env add NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY production
+echo "eyJ..." | vercel env add SUPABASE_SERVICE_ROLE_KEY production
 ```
 
 - [ ] **Step 2: Register the webhook URL in Stripe Dashboard**
