@@ -15,6 +15,22 @@ export async function POST(request: NextRequest) {
   }
 
   const supabase = await createClient()
+
+  // Rate limit: max 3 submissions per email per hour
+  const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString()
+  const { count: recentCount } = await supabase
+    .from('contact_messages')
+    .select('*', { count: 'exact', head: true })
+    .eq('email', email.trim())
+    .gte('created_at', oneHourAgo)
+
+  if ((recentCount ?? 0) >= 3) {
+    return NextResponse.json(
+      { error: 'Too many messages. Please try again later.' },
+      { status: 429 }
+    )
+  }
+
   const { error } = await supabase
     .from('contact_messages')
     .insert({ name: name.trim(), email: email.trim(), subject: subject.trim(), message: message.trim() })

@@ -37,23 +37,32 @@ export async function POST(
   const overallScore =
     allAnswers.reduce((sum: number, a: any) => sum + a.score, 0) / allAnswers.length
 
-  const qaPairs: QAPair[] = (session.questions as any[]).map((q: any) => ({
-    question: q.question_text,
-    answer: q.answers[0]?.answer_text ?? '',
-    score: q.answers[0]?.score ?? 0,
-  }))
+  // Only include answered questions so tips aren't skewed by unanswered ones
+  const qaPairs: QAPair[] = (session.questions as any[])
+    .filter((q: any) => q.answers.length > 0)
+    .map((q: any) => ({
+      question: q.question_text,
+      answer: q.answers[0].answer_text,
+      score: q.answers[0].score,
+    }))
 
   let tips: string[]
   try {
     tips = await generateTips(session.job_description, qaPairs)
-  } catch {
+  } catch (err) {
+    console.error('[complete] generateTips failed:', err)
     tips = []
   }
 
-  await supabase
+  const { error: updateError } = await supabase
     .from('sessions')
     .update({ status: 'completed', overall_score: overallScore, tips })
     .eq('id', id)
+
+  if (updateError) {
+    console.error('[complete] session update failed:', updateError)
+    return NextResponse.json({ error: 'Failed to save results' }, { status: 500 })
+  }
 
   return NextResponse.json({ overallScore, tips })
 }

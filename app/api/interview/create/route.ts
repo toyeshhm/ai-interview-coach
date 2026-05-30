@@ -33,10 +33,15 @@ export async function POST(request: NextRequest) {
     .single()
 
   if (profile?.plan !== 'pro') {
-    const { count } = await supabase
+    const { count, error: countError } = await supabase
       .from('sessions')
       .select('*', { count: 'exact', head: true })
       .eq('user_id', user.id)
+
+    if (countError) {
+      console.error('[create] session count failed:', countError)
+      return NextResponse.json({ error: 'Failed to check session limit' }, { status: 500 })
+    }
 
     if ((count ?? 0) >= 5) {
       return NextResponse.json({ error: 'session_limit_reached' }, { status: 403 })
