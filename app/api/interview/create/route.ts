@@ -25,6 +25,25 @@ export async function POST(request: NextRequest) {
     )
   }
 
+  // --- Session limit gate ---
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('plan')
+    .eq('id', user.id)
+    .single()
+
+  if (profile?.plan !== 'pro') {
+    const { count } = await supabase
+      .from('sessions')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+
+    if ((count ?? 0) >= 5) {
+      return NextResponse.json({ error: 'session_limit_reached' }, { status: 403 })
+    }
+  }
+  // --- End gate ---
+
   const { data: session, error: sessionError } = await supabase
     .from('sessions')
     .insert({
@@ -51,9 +70,7 @@ export async function POST(request: NextRequest) {
 
   const { error: questionsError } = await supabase
     .from('questions')
-    .insert(
-      questions.map(q => ({ session_id: session.id, ...q }))
-    )
+    .insert(questions.map(q => ({ session_id: session.id, ...q })))
 
   if (questionsError) {
     await supabase.from('sessions').delete().eq('id', session.id)
