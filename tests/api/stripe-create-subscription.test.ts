@@ -37,7 +37,9 @@ describe('POST /api/stripe/create-subscription', () => {
         select: vi.fn().mockReturnThis(),
         eq: vi.fn().mockReturnThis(),
         single: vi.fn().mockResolvedValue({ data: { stripe_customer_id: null }, error: null }),
-        update: vi.fn().mockReturnThis(),
+        update: vi.fn().mockReturnValue({
+          eq: vi.fn().mockResolvedValue({ error: null }),
+        }),
       })),
     } as any)
 
