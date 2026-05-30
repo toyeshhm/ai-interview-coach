@@ -1,5 +1,7 @@
 'use client'
 
+import Link from 'next/link'
+
 export default function SiteFooter() {
   return (
     <footer
@@ -8,7 +10,7 @@ export default function SiteFooter() {
     >
       <div
         className="font-sans font-bold text-[12px] tracking-[0.06em] uppercase"
-        style={{ color: '#3a3530' }}
+        style={{ color: 'var(--stone)' }}
       >
         Prep<span style={{ color: 'var(--coral)' }}>.</span>AI
       </div>
@@ -17,22 +19,22 @@ export default function SiteFooter() {
         {[
           { label: 'Privacy', href: '/privacy' },
           { label: 'Terms', href: '/terms' },
-          { label: 'Contact', href: 'mailto:toyeshhm@gmail.com' },
+          { label: 'Contact', href: '/contact' },
         ].map(({ label, href }) => (
-          <a
+          <Link
             key={label}
             href={href}
             className="font-sans text-[12px] transition-colors"
-            style={{ color: 'var(--warm-mid)' }}
-            onMouseEnter={e => ((e.currentTarget as HTMLElement).style.color = 'var(--stone)')}
-            onMouseLeave={e => ((e.currentTarget as HTMLElement).style.color = 'var(--warm-mid)')}
+            style={{ color: 'var(--stone)' }}
+            onMouseEnter={e => ((e.currentTarget as HTMLElement).style.color = 'var(--cream)')}
+            onMouseLeave={e => ((e.currentTarget as HTMLElement).style.color = 'var(--stone)')}
           >
             {label}
-          </a>
+          </Link>
         ))}
       </div>
 
-      <div className="font-sans text-[12px]" style={{ color: '#4a4540' }}>
+      <div className="font-sans text-[12px]" style={{ color: 'var(--warm-mid)' }}>
         © 2026 Prep.AI
       </div>
     </footer>

@@ -26,9 +26,9 @@ export default async function DashboardPage() {
           borderColor: 'var(--border-dark)',
         }}
       >
-        <div className="font-sans font-bold text-[13px] tracking-[0.07em] uppercase" style={{ color: 'var(--cream)' }}>
+        <Link href="/" className="font-sans font-bold text-[13px] tracking-[0.07em] uppercase" style={{ color: 'var(--cream)' }}>
           Prep<span style={{ color: 'var(--coral)' }}>.</span>AI
-        </div>
+        </Link>
         <div className="flex items-center gap-6">
           <span className="font-mono text-[11px]" style={{ color: '#4a4540' }}>{user.email}</span>
           <SignOutButton />
