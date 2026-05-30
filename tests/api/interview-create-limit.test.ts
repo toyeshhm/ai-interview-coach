@@ -43,18 +43,23 @@ function makeSupabaseMock({
         }
       }
       if (table === 'sessions') {
-        return {
-          select: vi.fn().mockImplementation((_cols: string, opts?: { count?: string }) => {
-            if (opts?.count === 'exact') {
-              return {
-                eq: vi.fn().mockResolvedValue({ count: sessionCount, error: null }),
-              }
-            }
-            return {
-              single: vi.fn().mockResolvedValue({ data: insertedSession, error: null }),
-            }
+        // insert chain: .insert({}).select().single()
+        const insertChain = {
+          select: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({ data: insertedSession, error: null }),
           }),
-          insert: vi.fn().mockReturnThis(),
+        }
+        // count chain: .select('*', { count: 'exact', head: true }).eq(...)
+        const countChain = {
+          eq: vi.fn().mockResolvedValue({ count: sessionCount, error: null }),
+        }
+        return {
+          insert: vi.fn().mockReturnValue(insertChain),
+          select: vi.fn().mockImplementation((_cols: string, opts?: { count?: string }) => {
+            if (opts?.count === 'exact') return countChain
+            // fallback (shouldn't happen, but safe)
+            return { single: vi.fn().mockResolvedValue({ data: insertedSession, error: null }) }
+          }),
           delete: vi.fn().mockReturnThis(),
           eq: vi.fn().mockReturnThis(),
         }
@@ -87,6 +92,8 @@ describe('POST /api/interview/create — session limit', () => {
     const res = await POST(makeRequest({ jobDescription: 'Engineer', resumeText: 'My resume' }))
 
     expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body.sessionId).toBe('session-1')
   })
 
   it('allows a pro user regardless of session count', async () => {
@@ -95,5 +102,7 @@ describe('POST /api/interview/create — session limit', () => {
     const res = await POST(makeRequest({ jobDescription: 'Engineer', resumeText: 'My resume' }))
 
     expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body.sessionId).toBe('session-1')
   })
 })
