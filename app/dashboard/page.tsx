@@ -51,7 +51,13 @@ export default async function DashboardPage() {
           </h1>
           <p className="font-sans text-[13px]" style={{ color: 'var(--warm-mid)' }}>
             {sessions && sessions.length > 0
-              ? `${sessions.length} session${sessions.length === 1 ? '' : 's'} completed`
+              ? (() => {
+                  const completed = sessions.filter(s => s.status === 'completed').length
+                  const total = sessions.length
+                  return completed === total
+                    ? `${total} session${total === 1 ? '' : 's'} completed`
+                    : `${total} session${total === 1 ? '' : 's'} · ${completed} completed`
+                })()
               : 'No sessions yet'}
           </p>
         </div>

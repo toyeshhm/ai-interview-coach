@@ -16,7 +16,10 @@ export default function InterviewClient({ session }: { session: Session }) {
   const questions: Question[] = (session.questions ?? []).sort(
     (a, b) => a.order_index - b.order_index
   )
-  const [currentIndex, setCurrentIndex] = useState(0)
+  const firstUnanswered = questions.findIndex(q => !q.answers || q.answers.length === 0)
+  // -1 means all answered: resume at last question so user can proceed to results
+  const initialIndex = firstUnanswered === -1 ? Math.max(0, questions.length - 1) : firstUnanswered
+  const [currentIndex, setCurrentIndex] = useState(initialIndex)
   const [answerText, setAnswerText] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [lastResult, setLastResult] = useState<AnswerResult | null>(null)
@@ -25,7 +28,7 @@ export default function InterviewClient({ session }: { session: Session }) {
 
   const currentQuestion = questions[currentIndex]
   const isLastQuestion = currentIndex === questions.length - 1
-  const progressPct = (currentIndex / questions.length) * 100
+  const progressPct = ((currentIndex + 1) / questions.length) * 100
 
   async function handleSubmitAnswer() {
     setSubmitting(true)
