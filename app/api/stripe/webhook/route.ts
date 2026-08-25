@@ -1,7 +1,7 @@
 import type { Stripe } from 'stripe'
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/lib/supabase/admin'
-import { stripe } from '@/lib/stripe'
+import { getSupabaseAdmin } from '@/lib/supabase/admin'
+import { getStripe } from '@/lib/stripe'
 
 export async function POST(request: NextRequest) {
   const body = await request.text()
@@ -9,12 +9,12 @@ export async function POST(request: NextRequest) {
 
   let event: Stripe.Event
   try {
-    event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET!)
+    event = getStripe().webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET!)
   } catch {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
   }
 
-  const supabase = supabaseAdmin
+  const supabase = getSupabaseAdmin()
 
   if (
     event.type === 'customer.subscription.updated' ||

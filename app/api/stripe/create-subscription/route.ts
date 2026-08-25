@@ -1,7 +1,7 @@
 import type { Stripe } from 'stripe'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { stripe } from '@/lib/stripe'
+import { getStripe } from '@/lib/stripe'
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient()
@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
 
   if (!customerId) {
     try {
-      const customer = await stripe.customers.create({
+      const customer = await getStripe().customers.create({
         email: user.email,
         metadata: { supabase_user_id: user.id },
       })
@@ -46,25 +46,27 @@ export async function POST(request: NextRequest) {
 
   let subscription: Stripe.Subscription
   try {
-    subscription = await stripe.subscriptions.create({
+    subscription = await getStripe().subscriptions.create({
       customer: customerId,
       items: [{ price: process.env.STRIPE_PRICE_ID! }],
       payment_behavior: 'default_incomplete',
-      expand: ['latest_invoice.payment_intent'],
+      // Basil (2025-03-31) removed Invoice.payment_intent; the client secret now
+      // comes from the invoice's confirmation_secret.
+      expand: ['latest_invoice.confirmation_secret'],
     })
   } catch {
     return NextResponse.json({ error: 'Failed to create subscription' }, { status: 500 })
   }
 
   const invoice = subscription.latest_invoice as Stripe.Invoice
-  const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent
+  const clientSecret = invoice.confirmation_secret?.client_secret
 
-  if (!paymentIntent.client_secret) {
+  if (!clientSecret) {
     return NextResponse.json({ error: 'Failed to initialize payment' }, { status: 500 })
   }
 
   return NextResponse.json({
     subscriptionId: subscription.id,
-    clientSecret: paymentIntent.client_secret,
+    clientSecret,
   })
 }

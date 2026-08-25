@@ -1,12 +1,12 @@
 import { NextRequest } from 'next/server'
 import { vi, beforeEach, describe, it, expect } from 'vitest'
 
+const mockConstructEvent = vi.hoisted(() => vi.fn())
+
 vi.mock('@/lib/stripe', () => ({
-  stripe: {
-    webhooks: {
-      constructEvent: vi.fn(),
-    },
-  },
+  getStripe: () => ({
+    webhooks: { constructEvent: mockConstructEvent },
+  }),
 }))
 
 // Use a module-level variable with vi.hoisted so it's available when the factory runs
@@ -22,10 +22,9 @@ const mockFrom = vi.hoisted(() =>
 )
 
 vi.mock('@/lib/supabase/admin', () => ({
-  supabaseAdmin: { from: mockFrom },
+  getSupabaseAdmin: () => ({ from: mockFrom }),
 }))
 
-import { stripe } from '@/lib/stripe'
 import { POST } from '@/app/api/stripe/webhook/route'
 
 function makeWebhookRequest(payload: object) {
@@ -49,7 +48,7 @@ describe('POST /api/stripe/webhook', () => {
         object: { id: 'sub_123', customer: 'cus_123', status: 'active' },
       },
     }
-    vi.mocked(stripe.webhooks.constructEvent).mockReturnValue(event as any)
+    mockConstructEvent.mockReturnValue(event as any)
 
     const res = await POST(makeWebhookRequest(event))
 
@@ -64,7 +63,7 @@ describe('POST /api/stripe/webhook', () => {
         object: { id: 'sub_123', customer: 'cus_123', status: 'canceled' },
       },
     }
-    vi.mocked(stripe.webhooks.constructEvent).mockReturnValue(event as any)
+    mockConstructEvent.mockReturnValue(event as any)
 
     const res = await POST(makeWebhookRequest(event))
 
@@ -72,7 +71,7 @@ describe('POST /api/stripe/webhook', () => {
   })
 
   it('returns 400 when signature verification fails', async () => {
-    vi.mocked(stripe.webhooks.constructEvent).mockImplementation(() => {
+    mockConstructEvent.mockImplementation(() => {
       throw new Error('Invalid signature')
     })
 

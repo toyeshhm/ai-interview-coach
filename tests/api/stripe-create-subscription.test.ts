@@ -3,7 +3,7 @@ import { vi, beforeEach, describe, it, expect } from 'vitest'
 
 vi.mock('@/lib/supabase/server')
 vi.mock('@/lib/stripe', () => ({
-  stripe: {
+  getStripe: () => ({
     customers: {
       create: vi.fn().mockResolvedValue({ id: 'cus_test123' }),
     },
@@ -11,13 +11,14 @@ vi.mock('@/lib/stripe', () => ({
       create: vi.fn().mockResolvedValue({
         id: 'sub_test123',
         latest_invoice: {
-          payment_intent: {
+          confirmation_secret: {
             client_secret: 'pi_test_secret',
+            type: 'payment_intent',
           },
         },
       }),
     },
-  },
+  }),
 }))
 
 import { createClient } from '@/lib/supabase/server'
