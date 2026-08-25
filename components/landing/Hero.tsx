@@ -66,7 +66,7 @@ export default function Hero() {
           >
             {[
               'Paste your resume and job description',
-              'Get five questions tailored to the actual role',
+              'Get tailored questions matched to the actual role',
               'Score every answer. Improve fast.',
             ].map(item => (
               <div key={item} className="flex items-baseline gap-3 text-[14px] font-sans font-light" style={{ color: 'var(--stone)' }}>

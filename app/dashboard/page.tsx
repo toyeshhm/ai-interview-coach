@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import SessionCard from '@/components/dashboard/SessionCard'
+import SignOutButton from '@/components/dashboard/SignOutButton'
 import type { Session } from '@/types'
 
 export default async function DashboardPage() {
@@ -25,11 +26,12 @@ export default async function DashboardPage() {
           borderColor: 'var(--border-dark)',
         }}
       >
-        <div className="font-sans font-bold text-[13px] tracking-[0.07em] uppercase" style={{ color: 'var(--cream)' }}>
+        <Link href="/" className="font-sans font-bold text-[13px] tracking-[0.07em] uppercase" style={{ color: 'var(--cream)' }}>
           Prep<span style={{ color: 'var(--coral)' }}>.</span>AI
-        </div>
+        </Link>
         <div className="flex items-center gap-6">
           <span className="font-mono text-[11px]" style={{ color: '#4a4540' }}>{user.email}</span>
+          <SignOutButton />
           <Link
             href="/interview/new"
             className="font-sans font-bold text-[13px] text-white px-4 py-2 rounded-[5px] transition-colors"
@@ -51,7 +53,13 @@ export default async function DashboardPage() {
           </h1>
           <p className="font-sans text-[13px]" style={{ color: 'var(--warm-mid)' }}>
             {sessions && sessions.length > 0
-              ? `${sessions.length} session${sessions.length === 1 ? '' : 's'} completed`
+              ? (() => {
+                  const completed = sessions.filter(s => s.status === 'completed').length
+                  const total = sessions.length
+                  return completed === total
+                    ? `${total} session${total === 1 ? '' : 's'} completed`
+                    : `${total} session${total === 1 ? '' : 's'} · ${completed} completed`
+                })()
               : 'No sessions yet'}
           </p>
         </div>

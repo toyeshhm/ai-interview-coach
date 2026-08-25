@@ -1,8 +1,23 @@
 'use client'
 
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { createClient } from '@/lib/supabase/client'
 
 export default function Nav() {
+  const [loggedIn, setLoggedIn] = useState(false)
+
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getSession().then(({ data }) => {
+      setLoggedIn(!!data.session)
+    })
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+      setLoggedIn(!!session)
+    })
+    return () => subscription.unsubscribe()
+  }, [])
+
   return (
     <nav
       className="sticky top-0 z-50 flex items-center justify-between h-16 px-13 border-b"
@@ -12,9 +27,7 @@ export default function Nav() {
         borderColor: 'var(--border-dark)',
       }}
     >
-      <div
-        className="font-sans font-bold text-[13px] tracking-[0.07em] uppercase text-cream"
-      >
+      <div className="font-sans font-bold text-[13px] tracking-[0.07em] uppercase text-cream">
         Prep<span style={{ color: 'var(--coral)' }}>.</span>AI
       </div>
 
@@ -35,22 +48,38 @@ export default function Nav() {
       </ul>
 
       <div className="flex items-center gap-2">
-        <Link
-          href="/auth?tab=login"
-          className="text-[13px] font-medium px-4 py-2 rounded"
-          style={{ color: 'var(--stone)' }}
-        >
-          Sign in
-        </Link>
-        <Link
-          href="/auth"
-          className="text-[13px] font-bold text-white px-4 py-2 rounded-[5px] transition-colors"
-          style={{ background: 'var(--coral)' }}
-          onMouseEnter={e => ((e.currentTarget as HTMLElement).style.background = 'var(--coral-hover)')}
-          onMouseLeave={e => ((e.currentTarget as HTMLElement).style.background = 'var(--coral)')}
-        >
-          Get started free
-        </Link>
+        {loggedIn ? (
+          <Link
+            href="/dashboard"
+            className="text-[13px] font-bold text-white px-4 py-2 rounded-[5px] transition-colors"
+            style={{ background: 'var(--coral)' }}
+            onMouseEnter={e => ((e.currentTarget as HTMLElement).style.background = 'var(--coral-hover)')}
+            onMouseLeave={e => ((e.currentTarget as HTMLElement).style.background = 'var(--coral)')}
+          >
+            Dashboard →
+          </Link>
+        ) : (
+          <>
+            <Link
+              href="/auth?tab=login"
+              className="text-[13px] font-medium px-4 py-2 rounded transition-colors"
+              style={{ color: 'var(--stone)' }}
+              onMouseEnter={e => ((e.currentTarget as HTMLElement).style.color = 'var(--cream)')}
+              onMouseLeave={e => ((e.currentTarget as HTMLElement).style.color = 'var(--stone)')}
+            >
+              Sign in
+            </Link>
+            <Link
+              href="/auth"
+              className="text-[13px] font-bold text-white px-4 py-2 rounded-[5px] transition-colors"
+              style={{ background: 'var(--coral)' }}
+              onMouseEnter={e => ((e.currentTarget as HTMLElement).style.background = 'var(--coral-hover)')}
+              onMouseLeave={e => ((e.currentTarget as HTMLElement).style.background = 'var(--coral)')}
+            >
+              Get started free
+            </Link>
+          </>
+        )}
       </div>
     </nav>
   )

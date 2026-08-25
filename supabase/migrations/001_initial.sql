@@ -20,7 +20,7 @@ create table if not exists answers (
   id            uuid primary key default gen_random_uuid(),
   question_id   uuid references questions on delete cascade not null,
   answer_text   text not null,
-  score         integer not null,
+  score         numeric(4,2) not null,
   feedback      text not null,
   created_at    timestamptz default now()
 );

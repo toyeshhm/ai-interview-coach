@@ -36,18 +36,7 @@ export async function POST(
     return NextResponse.json({ error: 'Question not found' }, { status: 404 })
   }
 
-  let evaluation
-  try {
-    evaluation = await evaluateAnswer(
-      question.sessions.job_description,
-      question.question_text,
-      answerText
-    )
-  } catch {
-    return NextResponse.json({ error: 'Failed to evaluate answer' }, { status: 500 })
-  }
-
-  // Check for existing answer
+  // Check for existing answer before calling AI (fail fast, avoid double-charging)
   const { data: existing } = await supabase
     .from('answers')
     .select('id')
@@ -56,6 +45,18 @@ export async function POST(
 
   if (existing) {
     return NextResponse.json({ error: 'Answer already submitted for this question' }, { status: 409 })
+  }
+
+  let evaluation
+  try {
+    evaluation = await evaluateAnswer(
+      question.sessions.job_description,
+      question.question_text,
+      answerText
+    )
+  } catch (err) {
+    console.error('[answer] evaluateAnswer failed:', err)
+    return NextResponse.json({ error: 'Failed to evaluate answer' }, { status: 500 })
   }
 
   const { data: answer, error } = await supabase

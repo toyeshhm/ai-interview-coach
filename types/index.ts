@@ -44,3 +44,11 @@ export interface QAPair {
   answer: string
   score: number
 }
+
+export interface Profile {
+  id: string
+  plan: 'free' | 'pro'
+  stripe_customer_id: string | null
+  stripe_subscription_id: string | null
+  updated_at: string
+}

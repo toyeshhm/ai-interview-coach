@@ -10,8 +10,8 @@ const STEPS = [
   },
   {
     num: '02',
-    title: 'Answer five\ntailored questions',
-    body: "Behavioral, technical, and situational — five questions calibrated to your background and the seniority of the role you're targeting.",
+    title: 'Answer tailored\nquestions',
+    body: "Behavioral, technical, and situational — questions calibrated to your background and the seniority of the role you're targeting.",
     asideLabel: 'Question types',
     asideBody: "Behavioral drawn from your specific past experience. Technical or system design matched to the role's stack and scope.",
   },
