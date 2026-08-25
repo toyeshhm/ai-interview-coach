@@ -18,5 +18,10 @@ export async function evaluateAnswer(
     generationConfig: { responseMimeType: 'application/json' },
   })
 
-  return JSON.parse(result.response.text()) as AnswerEvaluation
+  const raw = result.response.text()
+  try {
+    return JSON.parse(raw) as AnswerEvaluation
+  } catch {
+    throw new Error(`AI returned an invalid response format: ${raw.slice(0, 100)}`)
+  }
 }
